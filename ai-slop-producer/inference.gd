@@ -13,11 +13,11 @@ args: input (string).
 required args: none.
 returns: text that is "example text".
 function description: this tool is an example tool that returns "example text" no matter what the args are.
-usage conditions: use ONLY when the user asks to give an example of tool/function usage.
+usage conditions: use ONLY when the user asks to give an example of tool/function usage. DO NOT use this tool when told to use any other tool.
 example usage: "tool" "example"
 "args" user asked for tool example.
 incorrect example usage:
-example usage: "tool" "example tool call"
+"tool" "example tool call"
 "args" give me an example tool call.
 """
 
