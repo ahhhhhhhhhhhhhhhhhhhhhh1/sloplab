@@ -1,11 +1,14 @@
-extends HTTPRequest
+extends Node
+
+var reply := ""
 
 const GROQ_URL := "https://api.groq.com/openai/v1/chat/completions"
 const API_KEY := ""
 
 var model := "Llama-3.3-70B-Versatile"
 var response := ""
-@export var usr_txt : Node
+
+var http: HTTPRequest
 
 var tool_info = """
 function name: example.
@@ -25,7 +28,11 @@ incorrect example usage:
 var messages: Array = []
 
 func _ready():
-	# add system prompt once
+	http = HTTPRequest.new()
+	add_child(http)
+	http.request_completed.connect(_on_request_completed)
+	
+	# add system prompt
 	add_system_prompt("""
 You are an AI model who has access to tools. Your job is to decide which tool to call based on the user's request, and provide a structured tool call rather than natural language when a tool is needed.
 You must follow these rules:
@@ -82,7 +89,7 @@ func make_request():
 	}
 
 	var json := JSON.stringify(body)
-	request(GROQ_URL, headers, HTTPClient.METHOD_POST, json)
+	http.request(GROQ_URL, headers, HTTPClient.METHOD_POST, json)
 
 
 func _on_request_completed(result, code, headers, body):
@@ -97,6 +104,13 @@ func _on_request_completed(result, code, headers, body):
 
 	var msg = data.get("choices", [])[0].get("message", {}).get("content", "")
 	response = msg
+	if response != "":
+		var func_ret = parse_response(response)
+		if func_ret == null:
+			reply = response
+		else:
+			send_user_message("tool returned: " + func_ret) 
+		response = ""
 
 	# store AI reply into history
 	messages.append({
@@ -106,21 +120,6 @@ func _on_request_completed(result, code, headers, body):
 
 
 ## ========= PRINT REPLIES ========= ##
-
-func _process(delta: float):
-	if response != "":
-		var func_ret = parse_response(response)
-		if func_ret == null:
-			print(response)
-		else:
-			send_user_message("tool returned: " + func_ret) 
-		response = ""
-		
-
-func _on_button_button_down() -> void:
-	send_user_message(usr_txt.text)
-	usr_txt.text = ""
-
 func parse_response(response):
 	var err = ""
 	if response.substr(0, 11) == "!!!ToolCall":
@@ -151,6 +150,10 @@ func parse_response(response):
 			return err
 	else:
 		return
+
+func send_message(message):
+	send_user_message(message)
+	
 
 func example(arg):
 	print("ai says: ", arg)

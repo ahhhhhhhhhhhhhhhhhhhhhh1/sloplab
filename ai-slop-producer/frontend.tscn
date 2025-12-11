@@ -1,0 +1,39 @@
+[gd_scene load_steps=2 format=3 uid="uid://bvmj3n2era1tr"]
+
+[ext_resource type="Script" uid="uid://c6cvprpumai3n" path="res://frontend.gd" id="1_t0f2c"]
+
+[node name="Control" type="Control" node_paths=PackedStringArray("text_field", "label")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_t0f2c")
+text_field = NodePath("TextEdit")
+label = NodePath("Label")
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 437.0
+offset_top = 337.0
+offset_right = 724.0
+offset_bottom = 414.0
+text = "send"
+
+[node name="TextEdit" type="TextEdit" parent="."]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 454.0
+offset_right = 1150.0
+offset_bottom = 646.0
+placeholder_text = "type your message here"
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = 1144.0
+offset_bottom = 301.0
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

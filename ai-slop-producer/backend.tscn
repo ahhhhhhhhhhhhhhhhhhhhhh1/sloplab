@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://bhb00dtl23hhs"]
+
+[ext_resource type="Script" uid="uid://dvbmp2jowtgio" path="res://API.gd" id="1_ig7tw"]
+
+[node name="HTTPRequest" type="HTTPRequest"]
+script = ExtResource("1_ig7tw")
+
+[connection signal="request_completed" from="." to="." method="_on_request_completed"]
+[connection signal="send_message" from="." to="." method="_on_send_message"]
